@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Toaster, toast } from "react-hot-toast";
 
-const Card = ({user}) => {
+const Card = ({users}) => {
 
     const [amount, setAmount] = useState("")
     // const [name, setName] = ("")
@@ -9,28 +9,42 @@ const Card = ({user}) => {
     // const [expireD, setExpireD] = ("")
     // const [expireM, setExpireM] = ("")
     // const [cvc, setCvc] = ("")
-    const [balance, setBalance] =useState (user.balance)
+    const [checked, setChecked] = useState("")
+
     
+    
+     
 
     function payment (e) {
         e.preventDefault();
-        const name = e.target.name.value;
+        const name = (e.target.name.value).toLowerCase();
         const cardNumber = e.target.cardNumber.value;
         const expiryD = e.target.expiryD.value;
         const expiryM = e.target.expiryM.value;
         const cvc = e.target.CVC.value;
+
+        const cardArr = [name, cardNumber, expiryD, expiryM, cvc]
+        
+        const user = users.find((u)=>u.name == name.toLowerCase())
+        console.log(user)
+        console.log(checked)
+
         
         
 
         console.log(name, cardNumber)
-        if (balance < Number(amount)) {
+        if (user.balance < Number(amount)) {
             toast.error("ანგარიშზე არ არის საკმარისი თანხა")
         }else{
             if (name == user.name && cardNumber == user.cardNumber && expiryD == user.expiryD && expiryM == user.expiryM && cvc == user.CVC) {
                 
-                setBalance(balance - Number(amount))
+                user.balance = user.balance - Number(amount)
 
                 toast.success("გადახდა შესრულებულია")
+
+                if (checked == true){
+                    localStorage.setItem("card", cardArr)
+                }
             }else{
                 toast.error("მონაცემები არასწორია")
             }
@@ -50,7 +64,7 @@ const Card = ({user}) => {
                     </div>
 
                     <div className="flex w-full items-center gap-4 mt-20">
-                        <input type="checkbox"/>
+                        <input type="checkbox" onChange={(e) => setChecked(e.target.checked)}/>
                         <label htmlFor="">Remember bank card</label>
                     </div>
                 </div>
